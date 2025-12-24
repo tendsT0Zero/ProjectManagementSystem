@@ -7,6 +7,7 @@ using ProjectManagementSystem.API.Data;
 using ProjectManagementSystem.API.Models;
 using ProjectManagementSystem.API.Repositories;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,8 +49,12 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<DbInitializer>();
-
-builder.Services.AddControllers();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 builder.Services.AddEndpointsApiExplorer();
 
 // Swagger
