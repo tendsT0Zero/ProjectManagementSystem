@@ -135,13 +135,17 @@ namespace ProjectManagementSystem.API.Controllers
             return BadRequest();
         }
         // delete task
-        // Delete: api/ProjectManager/{projectId}/delete-task/{taskId}
-
-
-        // get all members on a specific project including their roles
-        // Get: api/ProjectManager/{projectId}/members
-
-
+        // Delete: api/ProjectManager/delete-task/{taskId}
+        [HttpDelete("delete-task/{taskId:int}")]
+        public async Task<IActionResult> DeleteTask(int taskId)
+        {
+            var result = await _taskService.DeleteTaskAsync(taskId);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
         //update user roles 
         // Put: api/ProjectManager/{projectId}/update-user-roles/
     }
