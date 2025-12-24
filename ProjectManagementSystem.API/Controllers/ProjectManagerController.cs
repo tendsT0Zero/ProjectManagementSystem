@@ -13,11 +13,13 @@ namespace ProjectManagementSystem.API.Controllers
         private readonly IProjectService _projectService;
         private readonly IProjectMemberService _projectMemberService;
         private readonly ITaskService _taskService;
-        public ProjectManagerController(IProjectService projectService, IProjectMemberService projectMemberService, ITaskService taskService)
+        private readonly ITaskSubmissionService _taskSubmissionService;
+        public ProjectManagerController(IProjectService projectService, IProjectMemberService projectMemberService, ITaskService taskService, ITaskSubmissionService taskSubmissionService)
         {
             _projectService = projectService;
             _projectMemberService = projectMemberService;
             _taskService = taskService;
+            _taskSubmissionService = taskSubmissionService;
         }
 
 
@@ -143,6 +145,37 @@ namespace ProjectManagementSystem.API.Controllers
             if (result.IsSuccess)
             {
                 return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        //Get:/submission-history/{projectId}/{taskId}
+        [HttpGet("submission-history/{projectId:int}/{taskId:int}")]
+        public async Task<IActionResult> GetSubmissionHistory(int projectId,int taskId)
+        {
+            var result = await _taskSubmissionService.GetSubmissionHistoryAsync(projectId,taskId);
+            if (result.IsSuccess)
+            {
+                List<TaskSubmissionHistoryDto> submissionHistory = new();
+                if(result.ResponseObject!=null)
+                {
+                    foreach(var item in (List<TaskSubmission>)
+                        result.ResponseObject)
+                    {
+                        submissionHistory.Add(new TaskSubmissionHistoryDto
+                        {
+                            ProjectName = item.Task.Project.Name,
+                            TaskTitle = item.Task.Title,
+                            TaskDescription = item.Task.Description,
+                            SubmissionDate = DateOnly.FromDateTime(item.SubmittedOn),
+                            SubmitterName = item.Submitter.FullName,
+                            SubmissionNotes = item.SubmissionNotes,
+                            SubmissionAttachmentUrl = item.AttachmentUrl
+                        });
+                    }
+                    return Ok(submissionHistory);
+                }
+               
             }
             return BadRequest(result);
         }
