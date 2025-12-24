@@ -12,17 +12,17 @@ namespace ProjectManagementSystem.API.Models
         [MaxLength(150)]
         public string Name { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        public DateTime Deadline { get; set; }
+        public DateTime? Deadline { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [Required]
-        public string TeamLeaderId { get; set; }
+        public string? TeamLeaderId { get; set; }
 
         [ForeignKey("TeamLeaderId")]
-        public ApplicationUser TeamLeader { get; set; }
-        public ICollection<ProjectMember> Members { get; set; }
-        public ICollection<TaskItem> Tasks { get; set; }
+        public ApplicationUser? TeamLeader { get; set; }
+        public ICollection<ProjectMember>? Members { get; set; }
+        public ICollection<TaskItem>? Tasks { get; set; }
     }
 }

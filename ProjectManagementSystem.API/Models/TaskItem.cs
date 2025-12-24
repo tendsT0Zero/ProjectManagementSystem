@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ProjectManagementSystem.API.Static_Details;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectManagementSystem.API.Models
@@ -11,10 +12,10 @@ namespace ProjectManagementSystem.API.Models
         [Required]
         public string Title { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
         [Required]
-        public string Status { get; set; } = "Pending";
-        public string Priority { get; set; } = "Medium";
+        public string? Status { get; set; } = SD.TaskStatus.Pending.ToString();
+        public string? Priority { get; set; } = SD.TaskPriority.Low.ToString();
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? DueDate { get; set; }
@@ -30,6 +31,6 @@ namespace ProjectManagementSystem.API.Models
         public ApplicationUser AssignedToUser { get; set; }
 
         // Task Submissions
-        public ICollection<TaskSubmission> Submissions { get; set; }
+        public ICollection<TaskSubmission>? Submissions { get; set; }
     }
 }
