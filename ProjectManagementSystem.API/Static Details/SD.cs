@@ -8,5 +8,20 @@
             TeamLeader,
             TeamMember
         }
+
+        public enum TaskStatus
+        {
+            Pending,
+            InProgress,
+            Completed,
+            OnHold
+        }
+
+        public enum  TaskPriority
+        {
+            Medium,
+            High,
+            Low
+        }
     }
 }
