@@ -50,6 +50,11 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<DbInitializer>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IProjectMemberService, ProjectMemberService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+
+
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     
