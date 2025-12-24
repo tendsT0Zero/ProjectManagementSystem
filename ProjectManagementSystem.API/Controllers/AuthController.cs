@@ -17,8 +17,8 @@ namespace ProjectManagementSystem.API.Controllers
             _authService = authService;
         }
 
-        // ✅ ONLY ProjectManager can register users
-        [Authorize(Roles = "ProjectManager")]
+        
+        //[Authorize(Roles = "ProjectManager")]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegistrationRequestDto dto)
         {
@@ -29,7 +29,7 @@ namespace ProjectManagementSystem.API.Controllers
             return Ok(result);
         }
 
-        // ✅ Login must be public
+       
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto model)
