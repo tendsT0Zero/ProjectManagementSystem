@@ -34,7 +34,7 @@ namespace ProjectManagementSystem.API.Repositories
                 }
 
                 project.CreatedAt = DateTime.UtcNow;
-               
+
 
                 await _context.Projects.AddAsync(project);
                 await _context.SaveChangesAsync();
@@ -102,7 +102,7 @@ namespace ProjectManagementSystem.API.Repositories
         {
             try
             {
-                
+
                 var project = await _context.Projects
                     .Include(p => p.TeamLeader)
                     .Include(p => p.Members)
@@ -128,8 +128,8 @@ namespace ProjectManagementSystem.API.Repositories
             try
             {
                 var query = _context.Projects.Include(p => p.TeamLeader).AsQueryable();
-
                 
+
                 if (!string.IsNullOrEmpty(sort) && sort.ToLower() == "desc")
                 {
                     query = query.OrderByDescending(p => p.CreatedAt);
@@ -139,14 +139,23 @@ namespace ProjectManagementSystem.API.Repositories
                     query = query.OrderBy(p => p.CreatedAt);
                 }
 
-                
+
                 var totalCount = await query.CountAsync();
+                if (totalCount == 0)
+                {
+                    return new()
+                    {
+                        ResponseObject=null,
+                        IsSuccess=true,
+                        ErrorMessage="No Projects Availble now."
+                    };
+                }
                 var projects = await query
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
 
-                
+
                 var paginationResult = new
                 {
                     TotalCount = totalCount,
@@ -203,13 +212,13 @@ namespace ProjectManagementSystem.API.Repositories
 
                 foreach (var userId in memberIds)
                 {
-                
+
                     if (project.Members.Any(pm => pm.UserId == userId)) continue;
 
                     var user = await _userManager.FindByIdAsync(userId);
                     if (user == null) continue;
 
-                 
+
                     await _context.Members.AddAsync(new ProjectMember
                     {
                         ProjectId = projectId,
@@ -226,5 +235,29 @@ namespace ProjectManagementSystem.API.Repositories
             }
         }
         #endregion
+
+        //Get projects with projectId and TeamLeaderId
+        public async Task<ResponseDto> GetProjectsByTeamLeaderIdAsync(int projectId,string teamLeaderId)
+        {
+            try
+            {
+                var project = await _context.Projects.Include(p => p.Members)
+                    .FirstOrDefaultAsync(p => p.Id == projectId && p.TeamLeaderId == teamLeaderId);
+                    
+                if (project == null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        ErrorMessage = "Project not found or you are not the owner."
+                    };
+                }
+                return new ResponseDto { IsSuccess = true, ResponseObject = project };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDto { IsSuccess = false, ErrorMessage = ex.Message };
+            }
+        }
     }
 }
