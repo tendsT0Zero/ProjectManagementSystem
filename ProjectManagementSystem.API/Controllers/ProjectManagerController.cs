@@ -75,6 +75,7 @@ namespace ProjectManagementSystem.API.Controllers
                 Priority = taskDto.Priority,
                 CreatedAt = taskDto.CreatedAt,
                 DueDate = taskDto.DueDate,
+                IsRequiredAttachment = taskDto.IsRequiredAttachment,
                 ProjectId = projectId,
                 AssignedToUserId = taskDto.AssignedToUserId
             };
@@ -100,6 +101,7 @@ namespace ProjectManagementSystem.API.Controllers
                 Priority = taskDto.Priority,
                 DueDate = taskDto.DueDate,
                 ProjectId = projectId,
+                IsRequiredAttachment= taskDto.IsRequiredAttachment,
                 AssignedToUserId = taskDto.AssignedToUserId
             };
             var result = await _taskService.UpdateTaskAsync(taskId, taskItemdomain);

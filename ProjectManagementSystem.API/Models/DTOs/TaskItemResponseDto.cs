@@ -16,7 +16,7 @@ namespace ProjectManagementSystem.API.Models.DTOs
         public string? Status { get; set; } = SD.TaskStatus.Pending.ToString();
         public string? Priority { get; set; } = SD.TaskPriority.Low.ToString();
         public DateTime? DueDate { get; set; }
-
+        public bool IsRequiredAttachment { get; set; } = false;
         public string ProjectName { get; set; }=string.Empty;
 
         //Assigned User

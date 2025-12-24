@@ -62,6 +62,7 @@ namespace ProjectManagementSystem.API.Repositories
             existingTask.Status = task.Status;
             existingTask.Priority = task.Priority;
             existingTask.DueDate = task.DueDate;
+            existingTask.IsRequiredAttachment = task.IsRequiredAttachment;
 
             await _context.SaveChangesAsync();
             return new ResponseDto { IsSuccess = true, ResponseObject = existingTask, ErrorMessage = "Updated successfully!" };
@@ -85,7 +86,8 @@ namespace ProjectManagementSystem.API.Repositories
                 Description = task.Description != null ? task.Description : "No Description Added on this Task.",
                 AssignedToUserName = task.AssignedToUser.FullName,
                 DueDate = (DateTime)(task.DueDate != null ? task.DueDate : task.Project.Deadline),
-                Status=task.Status
+                Status=task.Status,
+                IsRequiredAttachment=task.IsRequiredAttachment
 
             }).ToList();
 

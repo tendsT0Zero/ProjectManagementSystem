@@ -17,7 +17,7 @@ namespace ProjectManagementSystem.API.Models.DTOs
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? DueDate { get; set; }
-
+        public bool IsRequiredAttachment { get; set; } = false;
         // Project
         public int ProjectId { get; set; }
 

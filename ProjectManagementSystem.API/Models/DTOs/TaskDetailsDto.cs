@@ -7,6 +7,7 @@
         public string Status { get; set; }
         public string AssignedToUserName { get; set; }
         public string ProjectName { get; set; }
+        public bool IsRequiredAttachment { get; set; }=false;
         public DateTime DueDate { get; set; }
     }
 }
