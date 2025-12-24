@@ -95,5 +95,28 @@ namespace ProjectManagementSystem.API.Repositories
                 IsSuccess=true
             };
         }
+
+        public async Task<ResponseDto> DeleteTaskAsync(int id)
+        {
+            //check really the any task exist with the id.?
+            var existingTask = await _context.Tasks.FirstOrDefaultAsync(u => u.Id == id);
+            if (existingTask != null)
+            {
+                _context.Tasks.Remove(existingTask);
+                await _context.SaveChangesAsync();
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    ResponseObject=existingTask
+                };
+            }
+
+            return new ResponseDto
+            {
+                IsSuccess = false,
+                ResponseObject = existingTask,
+                ErrorMessage="Failed to delete"
+            };
+        }
     }
 }

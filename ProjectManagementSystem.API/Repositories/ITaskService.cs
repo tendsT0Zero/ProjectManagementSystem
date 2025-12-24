@@ -12,5 +12,7 @@ namespace ProjectManagementSystem.API.Repositories
         Task<ResponseDto> UpdateTaskAsync(int id, TaskItem task);
 
         Task<ResponseDto> GetTasksByProjectIdAsync(int projectId);
+
+        Task<ResponseDto> DeleteTaskAsync(int id);
     }
 }
