@@ -9,8 +9,9 @@ namespace ProjectManagementSystem.API.Repositories
         Task<ResponseDto> UpdateAsync(Project project);
         Task<ResponseDto> DeleteAsync(int id);
         Task<ResponseDto> GetProjectById(int id);
+        Task<ResponseDto> GetProjectsByTeamLeaderIdAsync(int projectId,string teamLeaderId);
 
-       
+
         Task<ResponseDto> GetAllProjectsAsync(int pageNumber, int pageSize, string sort);
 
         Task<ResponseDto> AssignTeamLeaderAsync(int projectId, string teamLeaderId);
