@@ -16,5 +16,7 @@ namespace ProjectManagementSystem.API.Repositories
 
         Task<ResponseDto> AssignTeamLeaderAsync(int projectId, string teamLeaderId);
         Task<ResponseDto> AddTeamMembersAsync(int projectId, List<string> memberIds);
+
+        Task<ResponseDto> GetAllProjectDetailsAsync();
     }
 }

@@ -259,5 +259,40 @@ namespace ProjectManagementSystem.API.Repositories
                 return new ResponseDto { IsSuccess = false, ErrorMessage = ex.Message };
             }
         }
+
+        public async Task<ResponseDto> GetAllProjectDetailsAsync()
+        {
+            var projects = await _context.Projects
+                .Include(p => p.TeamLeader)
+                .Include(p => p.Members)
+                .ThenInclude(m => m.User)
+                .ToListAsync();
+            if (projects.Count == 0)
+            {
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    ResponseObject = null,
+                    ErrorMessage = "No Projects Available now."
+                };
+            }
+            var projectDetailsList = projects.Select(project => new ProjectDetailsDto
+            {
+                ProjectName = project.Name,
+                TeamLeaderName = project.TeamLeader != null ? project.TeamLeader.FullName : "No Team Leader Assigned",
+                MemberNames = project.Members != null
+                        ? project.Members
+                            .Where(m => m.User != null)
+                            .Select(m => m.User.FullName)
+                            .ToList()
+                        : new List<string>()
+            }).ToList();
+            return new ResponseDto
+            {
+                IsSuccess = true,
+                ResponseObject = projectDetailsList
+            };
+
+        }
     }
 }
