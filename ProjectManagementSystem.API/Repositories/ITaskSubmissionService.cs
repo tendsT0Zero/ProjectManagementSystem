@@ -6,6 +6,6 @@ namespace ProjectManagementSystem.API.Repositories
     public interface ITaskSubmissionService
     {
         Task<ResponseDto> GetSubmissionHistoryAsync(int projectId,int taskId);
-        Task<ResponseDto> PlaceASubmissionAsync(TaskSubmission taskSubmission, string userId);
+        Task<ResponseDto> PlaceASubmissionAsync(CreateTaskSubmissionDto dto, string userId);
     }
 }
