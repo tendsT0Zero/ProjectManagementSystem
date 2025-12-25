@@ -158,26 +158,27 @@ namespace ProjectManagementSystem.API.Controllers
             var result = await _taskSubmissionService.GetSubmissionHistoryAsync(projectId,taskId);
             if (result.IsSuccess)
             {
-                List<TaskSubmissionHistoryDto> submissionHistory = new();
-                if(result.ResponseObject!=null)
-                {
-                    foreach(var item in (List<TaskSubmission>)
-                        result.ResponseObject)
-                    {
-                        submissionHistory.Add(new TaskSubmissionHistoryDto
-                        {
-                            ProjectName = item.Task.Project.Name,
-                            TaskTitle = item.Task.Title,
-                            TaskDescription = item.Task.Description,
-                            SubmissionDate = DateOnly.FromDateTime(item.SubmittedOn),
-                            SubmitterName = item.Submitter.FullName,
-                            SubmissionNotes = item.SubmissionNotes,
-                            SubmissionAttachmentUrl = item.AttachmentUrl
-                        });
-                    }
-                    return Ok(submissionHistory);
-                }
-               
+                //List<TaskSubmissionHistoryDto> submissionHistory = new();
+                //if(result.ResponseObject!=null)
+                //{
+                //    foreach(var item in (List<TaskSubmission>)
+                //        result.ResponseObject)
+                //    {
+                //        submissionHistory.Add(new TaskSubmissionHistoryDto
+                //        {
+                //            ProjectName = item.Task.Project.Name,
+                //            TaskTitle = item.Task.Title,
+                //            TaskDescription = item.Task.Description,
+                //            SubmissionDate = DateOnly.FromDateTime(item.SubmittedOn),
+                //            SubmitterName = item.Submitter.FullName,
+                //            SubmissionNotes = item.SubmissionNotes,
+                //            SubmissionAttachmentUrl = item.AttachmentUrl
+                //        });
+                //    }
+                //    return Ok(submissionHistory);
+                //}
+                return Ok(result.ResponseObject);
+
             }
             return BadRequest(result);
         }
