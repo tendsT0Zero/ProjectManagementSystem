@@ -18,5 +18,6 @@ namespace ProjectManagementSystem.API.Repositories
         Task<ResponseDto> AddTeamMembersAsync(int projectId, List<string> memberIds);
 
         Task<ResponseDto> GetAllProjectDetailsAsync();
+        Task<bool> IsUserEngagedInAnyProjectAsync(string userId);
     }
 }

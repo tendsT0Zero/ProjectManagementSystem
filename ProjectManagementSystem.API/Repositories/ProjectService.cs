@@ -294,5 +294,24 @@ namespace ProjectManagementSystem.API.Repositories
             };
 
         }
+
+        public async Task<bool> IsUserEngagedInAnyProjectAsync(string userId)
+        {
+            try
+            {
+                var isTeamLeader = await _context.Projects.AnyAsync(p => p.TeamLeaderId == userId);
+                if(isTeamLeader)
+                {
+                    return true;
+                }
+                var isMember = await _context.Members.AnyAsync(m => m.UserId == userId);
+                return isMember;
+
+            }
+            catch(Exception ex)
+            {
+                 return false;
+            }
+        }
     }
 }
