@@ -85,34 +85,41 @@ namespace ProjectManagementSystem.API.Repositories
 
         public async Task<ResponseDto> AddNewMemberToProjectAsync(int projectId, string memberId)
         {
-            //check if project exists
-            var project = await _context.Projects
-                .Include(p => p.Members)
-                .FirstOrDefaultAsync(p => p.Id == projectId);
-            if (project == null)
+            try
             {
-                return new ResponseDto { IsSuccess = false, ErrorMessage = "Project not found" };
+                //check if project exists
+                var project = await _context.Projects
+                    .Include(p => p.Members)
+                    .FirstOrDefaultAsync(p => p.Id == projectId);
+                if (project == null)
+                {
+                    return new ResponseDto { IsSuccess = false, ErrorMessage = "Project not found" };
+                }
+                //check if user exists and is team member
+                var user = await _userManager.FindByIdAsync(memberId);
+                if (user == null || !await _userManager.IsInRoleAsync(user, "TeamMember"))
+                {
+                    return new ResponseDto { IsSuccess = false, ErrorMessage = "User not found or is not a Team Member" };
+                }
+                //check if user is already a member
+                if (project.Members.Any(m => m.UserId == memberId))
+                {
+                    return new ResponseDto { IsSuccess = false, ErrorMessage = "User is already a member of the project" };
+                }
+                //add new member
+                var newMember = new ProjectMember
+                {
+                    ProjectId = projectId,
+                    UserId = memberId
+                };
+                await _context.Members.AddAsync(newMember);
+                await _context.SaveChangesAsync();
+                return new ResponseDto { IsSuccess = true, ErrorMessage = "Member added successfully" };
             }
-            //check if user exists and is team member
-            var user = await _userManager.FindByIdAsync(memberId);
-            if (user == null || !await _userManager.IsInRoleAsync(user, "TeamMember"))
+            catch (Exception ex)
             {
-                return new ResponseDto { IsSuccess = false, ErrorMessage = "User not found or is not a Team Member" };
+                return new ResponseDto { IsSuccess = false, ErrorMessage = ex.Message };
             }
-            //check if user is already a member
-            if (project.Members.Any(m => m.UserId == memberId))
-            {
-                return new ResponseDto { IsSuccess = false, ErrorMessage = "User is already a member of the project" };
-            }
-            //add new member
-            var newMember = new ProjectMember
-            {
-                ProjectId = projectId,
-                UserId = memberId
-            };
-            await _context.Members.AddAsync(newMember);
-            await _context.SaveChangesAsync();
-            return new ResponseDto { IsSuccess = true, ErrorMessage = "Member added successfully" };
         }
     }
 }
