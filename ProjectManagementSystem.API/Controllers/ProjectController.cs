@@ -16,10 +16,11 @@ namespace ProjectManagementSystem.API.Controllers
     public class ProjectController : ControllerBase
     {
         private readonly IProjectService _projectService;
-        private readonly UserManager<ApplicationUser> _userManager;
-        public ProjectController(IProjectService projectService)
+        private readonly IAuthService _authService;
+        public ProjectController(IProjectService projectService, IAuthService authService)
         {
             _projectService = projectService;
+            _authService = authService;
         }
 
         //Create Project
@@ -115,6 +116,22 @@ namespace ProjectManagementSystem.API.Controllers
         [HttpPost("assign-team-leader/{projectId:int}/{teamLeaderId}")]
         public async Task<IActionResult> AssignTeamLeader(int projectId, string teamLeaderId)
         {
+            //Check the user engaged with any project as team leader or team member
+            var isEngagedResult=await _projectService.IsUserEngagedInAnyProjectAsync(teamLeaderId);
+            if(!isEngagedResult)
+            {
+                return BadRequest( new ResponseDto { IsSuccess = false, ErrorMessage = "User is already engaged in another project as Team Leader or Team Member." } );
+            }
+            //check current user role
+            var currentRole = await _authService.GetUserRoleAsync(teamLeaderId);
+            if (currentRole == "TeamMember")
+            {
+                var addRoleResult = await _authService.ChangeUserRoleAsync(teamLeaderId, "TeamLeader");
+                if (addRoleResult != "Success")
+                {
+                    return BadRequest(new ResponseDto { IsSuccess = false, ErrorMessage = addRoleResult } );
+                }
+            }
             var result = await _projectService.AssignTeamLeaderAsync(projectId, teamLeaderId);
             if (result.IsSuccess)
             {
@@ -136,6 +153,15 @@ namespace ProjectManagementSystem.API.Controllers
                 if (!ownership.IsSuccess)
                 {
                     return StatusCode(403, new ResponseDto { IsSuccess = false, ErrorMessage = "You dont own this course." });
+                }
+            }
+            //check if any member is engaged in other project
+            foreach (var memberId in memberIds)
+            {
+                var isEngagedResult = await _projectService.IsUserEngagedInAnyProjectAsync(memberId);
+                if (isEngagedResult)
+                {
+                    return BadRequest(new ResponseDto { IsSuccess = false, ErrorMessage = $"User with ID {memberId} is already engaged in this/another project as Team Leader or Team Member." });
                 }
             }
             //if not TeamLeader then user is ProjectManager
