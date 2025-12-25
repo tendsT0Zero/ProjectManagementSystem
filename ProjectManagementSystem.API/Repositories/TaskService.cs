@@ -120,5 +120,38 @@ namespace ProjectManagementSystem.API.Repositories
                 ErrorMessage="Failed to delete"
             };
         }
+
+        public async Task<ResponseDto?> GetTasksByAssignedUserIdAsync(string? userId)
+        {
+            var tasks = await _context.Tasks.Include(u => u.Project).Where(u => u.AssignedToUserId == userId).ToListAsync();
+            if (tasks.Any())
+            {
+                var tasksList = new List<TaskItemResponseDto>();
+                tasksList = tasks.Select(u => new TaskItemResponseDto
+                {
+                    Title=u.Title,
+                    Description=u.Description,
+                    ProjectName=u.Project.Name,
+                    DueDate=u.DueDate,
+                    Status=u.Status,
+                    IsRequiredAttachment=u.IsRequiredAttachment,
+
+
+                }).ToList();
+
+                return new ResponseDto
+                {
+                    ResponseObject = tasksList,
+                    IsSuccess =true
+                };
+            }
+            return new ResponseDto
+            {
+                ResponseObject=null,
+                IsSuccess=false,
+                ErrorMessage="User Not Found."
+            };
+        }
+
     }
 }

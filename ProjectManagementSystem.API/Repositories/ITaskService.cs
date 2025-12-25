@@ -14,5 +14,6 @@ namespace ProjectManagementSystem.API.Repositories
         Task<ResponseDto> GetTasksByProjectIdAsync(int projectId);
 
         Task<ResponseDto> DeleteTaskAsync(int id);
+        Task<ResponseDto?> GetTasksByAssignedUserIdAsync(string? userId);
     }
 }
