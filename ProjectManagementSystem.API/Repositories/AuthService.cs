@@ -115,6 +115,55 @@ namespace ProjectManagementSystem.API.Repositories
 
             return "Incorrect Login Credentials. Please Try Again.";
         }
+
+        public async Task<string> ChangeUserRoleAsync(string userId, string newRole)
+        {
+            //check if user exists
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) {
+                return "User not found.";
+            }
+            //is new role valid
+            if(newRole != SD.UserRoleType.TeamLeader.ToString() &&
+               newRole != SD.UserRoleType.TeamMember.ToString())
+            {
+                return "Invalid role assignment. Only TeamLeader or TeamMember are allowed.";
+            }
+            //remove old roles
+            var currentRoles = await _userManager.GetRolesAsync(user);
+
+            if (currentRoles.Count > 0)
+            {
+                var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                if (!removeResult.Succeeded)
+                {
+                    return "Failed to remove existing roles.";
+                }
+            }
+            //assign new role
+            var addResult=await _userManager.AddToRoleAsync(user, newRole);
+            if (!addResult.Succeeded) { 
+                return "Failed to assign new role.";
+            }
+            //return success message
+            return "Success";
+        }
+
+        public async Task<string> GetUserRoleAsync(string userId)
+        {
+            //check if user exists
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return "User not found.";
+            }
+            var roles = await _userManager.GetRolesAsync(user);
+            if (roles.Count == 0)
+            {
+                return "User has no assigned roles.";
+            }
+            return roles[0];
+        }
         #endregion
     }
 }
